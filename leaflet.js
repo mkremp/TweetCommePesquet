@@ -1,6 +1,6 @@
 window.onload=function(){
 
-    var map = L.map('map').setView([51, -0.09], 1.5);
+    var map = L.map('map').setView([51, -0.09], 13);
 
 
 
@@ -57,8 +57,13 @@ window.onload=function(){
               .bindPopup("ISS")
               .openPopup();
               //création de la ligne de déplacement de l'iss
-              var point = new L.LatLng(result.lat,result.long);
-              pointList.push(point);
+              if(result.long!=180){
+				var point = new L.LatLng(result.lat,result.long);
+				pointList.push(point);
+              }
+              else{
+				  polyline.clearLayers();
+				  }
               var polyline = new L.polyline(pointList, {color: 'red',weight: '3'});
               map.addLayer(polyline);
               //affichage de la latitude et longitude
