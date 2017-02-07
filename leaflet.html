@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
+     <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+     <script src="leaflet.js"></script>
+     <title>TweetCommePesquet</title>
+     <style> #map{height: 700px;
+                  width: 1050px;} </style>
+     <style> #coord{float: right;} </style>
+  </head>
+  <body>
+    <div id='lat'>
+      <p>Latitude : </p>
+    </div>
+    <div id='long'>
+      <p>Longitude : </p>
+    </div>
+
+      <!-- Un élément HTML pour recueillir l’affichage -->
+    <div id='map'></div>
+
+    <div id='case_suivi'>
+		<form action="leaflet.php" method="get">
+			<label>Suivre l'ISS<input type="checkbox" name="loisirs[]" /></label>
+		</form>
+    </div>
+    <div id='zoom'>
+		<form action='leaflet.php' method="get">
+			<label>Smartphone<input type="radio" name="zoom" value="7"/></label>
+			<label>Réflex<input type="radio" name="zoom" value="10"/></label>
+			<label>Téléobjectif<input type="radio" name="zoom" value="13"/></label>
+		</form>
+    </div>
+    
+
+
+  </body>
+</html>
