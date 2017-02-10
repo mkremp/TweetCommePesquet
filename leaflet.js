@@ -1,19 +1,21 @@
 window.onload=function(){
 
-    var map = L.map('map').setView([51, -0.09], 13);
+    var map = L.map('map')
 
 
 
     L.tileLayer('http://korona.geog.uni-heidelberg.de/tiles/roads/x={x}&y={y}&z={z}', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
+	
+	map.setView([51, -0.09], 13);
 
 	var iss = {
-		url: "http://api.open-notify.org/iss-now.json",
+		url: "https://api.wheretheiss.at/v1/satellites/25544",
 		methode: "GET",
 		getInfos: function(jsonObj){
-		  lat=jsonObj.iss_position.latitude;
-		  long=jsonObj.iss_position.longitude;
+		  lat=jsonObj.latitude;
+		  long=jsonObj.longitude;
 		  return {lat:lat , long:long };
 		}
 	};
@@ -21,8 +23,8 @@ window.onload=function(){
 	var myIcon = L.icon({
 	  iconUrl: 'navette.png',
 	  iconSize: [29, 24],
-	  iconAnchor: [9, 21],
-	  popupAnchor: [0, -14]
+	  //iconAnchor: [9, 21],
+	  //popupAnchor: [0, -14]
 	});
 	
 	var marqueurs=L.layerGroup()
@@ -33,7 +35,9 @@ window.onload=function(){
 	//var polyline = new L.polyline(pointList, {color: 'red',weight: '3'});
 	//map.addLayer(polyline);
 	
-		
+	
+	
+	
 	ajaxIss();
 
 	
@@ -50,6 +54,16 @@ window.onload=function(){
               var str=ajax.responseText;
               var jsonObj = JSON.parse(str);
               var result = iss.getInfos(jsonObj);
+			  //Bouton suivre
+			  var followISS=document.getElementById("test1");
+			  followISS.addEventListener('change',function(event){
+				  event.preventDefault();
+				  if (followISS.checked){
+					  map.setView([result.lat,result.long],13)
+				  }else{
+					  map.setView([51, -0.09], 2)
+					}
+				});
               //gestion des marqueurs
               marqueurs.clearLayers();
               L.marker([result.lat, result.long], {icon:myIcon})
@@ -58,8 +72,8 @@ window.onload=function(){
               .openPopup();
               //création de la ligne de déplacement de l'iss
               if(result.long!=180){
-				var point = new L.LatLng(result.lat,result.long);
-				pointList.push(point);
+				var point = new L.LatLng(result.lat,result.long)
+				pointList.push(point)
               }
               else{
 				  polyline.clearLayers();
@@ -69,6 +83,8 @@ window.onload=function(){
               //affichage de la latitude et longitude
               document.getElementById("lat").innerHTML = "Latitude : "+result.lat;
               document.getElementById("long").innerHTML = "Longitude : "+result.long;
+			  //Ceckbox
+
               //répétition de la fonction toutes les 5 secondes
               setTimeout(function() {ajaxIss ()},5000);
 
