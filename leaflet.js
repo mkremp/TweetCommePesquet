@@ -28,8 +28,8 @@ window.onload=function(){
   var point = new L.LatLng(0,0);
   var followISS=document.getElementById("checkboxFollow");
   var zoom = document.getElementById("zoom");
-  var validation = zoom[2];
-	
+  var validation = document.getElementById("tcp");
+  var url;
 
 
   var marqueurs=L.layerGroup()
@@ -49,14 +49,16 @@ window.onload=function(){
           pointlist.push(point);
     }
     else{
-          pointList.clearLayers();
+          pointlist.length = 0;
+          polyline.clearLayers();
+
         }
     var polyline = new L.polyline(pointList, {color: 'red',weight: '3'});
     map.addLayer(polyline);
   };
 
 	followISS.addEventListener('change',function(event){
-		event.preventDefault();
+    event.preventDefault();
 		if (followISS.checked){
 			center(map,point,zoom);
 		}else{
@@ -64,23 +66,27 @@ window.onload=function(){
 			zoom[0].disabled=true;
 			zoom[1].disabled=true;
 			zoom[2].disabled=true;
-			
+
 		}
 	});
-	
-	followISS.addEventListener('change',function(event){
-		event.preventDefault();
-		if (followISS.checked){
-			center(map,point,zoom);
-		}else{
-			map.setView([0, 0], 2);
-			zoom[0].disabled=true;
-			zoom[1].disabled=true;
-			zoom[2].disabled=true;
-			
-		}
-	});
-	
+
+
+	//validation.addEventListener('submit',function(event){
+    //event.preventDefault();
+
+//  };
+
+
+
+
+  validation.addEventListener('click', function(event) {
+      event.preventDefault();
+      document.picture.innerHTML = " <img src=url />";
+
+  });
+
+
+
 	function center (map,point,radio) {
 		for (i=0;i<radio.length;i++){
 			if (radio[i].checked){
@@ -90,11 +96,11 @@ window.onload=function(){
 		console.log(map.getCenter());
 		}
 	};
-		
-		
-	
 
-	
+
+
+
+
 	ajaxIss();
 
 
@@ -121,7 +127,7 @@ window.onload=function(){
 				console.log(zoom[0].value);
 				center(map,point,zoom);
 			}
-			
+
               //création de la ligne de déplacement de l'iss
               poly(result.long,point,pointList);
               //gestion des marqueurs
@@ -132,16 +138,27 @@ window.onload=function(){
               //affichage de la latitude et longitude
               document.getElementById("lat").innerHTML = "Latitude : "+result.lat;
               document.getElementById("long").innerHTML = "Longitude : "+result.long;
-
-			  
-			  
+              
+              url = "https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/"+result.long+","+result.lat+"," ;
+              /*for (i=0;i<radio.length;i++){
+                console.log(radio[i].value);
+          			if (radio[i].checked){
+                  console.log(radio[i].value);
+          					url+='radio[i].value';
+                  };
+               };*/
+              url+='2/700x250?access_token=pk.eyJ1IjoiY29oYWxsaWVyIiwiYSI6ImNpemVmODgxZTAwNzgzMnBlZzRkMXh1MjcifQ.0EiwSBDZMzgfEcam2M6nUA';
+              console.log(url);
 
               //répétition de la fonction toutes les 5 secondes
               setTimeout(function() {ajaxIss ()},5000);
 
+
 			    }
 		  });
       ajax.send("");
+
+
 
 
     };
