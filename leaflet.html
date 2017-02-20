@@ -22,13 +22,14 @@
     <div id='map'></div>
 
     <div id='case_suivi'>
-			<label>Suivre l'ISS<input type="checkbox" name="myCheckbox" id="test1" /></label>
+			<label>Suivre l'ISS<input type="checkbox" name="myCheckbox" id="checkboxFollow" /></label>
     </div>
-    <div id='zoom'>
-		<form action='leaflet.php' method="get">
-			<label>Smartphone<input type="radio" name="zoom" value="7"/></label>
+    <div id='radio'>
+		<form action='' id='zoom'>
+			<label>Smartphone<input type="radio" name="zoom" value="7" /></label>
 			<label>Réflex<input type="radio" name="zoom" value="10"/></label>
 			<label>Téléobjectif<input type="radio" name="zoom" value="13"/></label>
+			<input type="submit" name="envoi" value="Tweet comme Pesquet"/>
 		</form>
     </div>
 

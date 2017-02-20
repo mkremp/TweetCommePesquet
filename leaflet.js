@@ -25,8 +25,12 @@ window.onload=function(){
 	});
 
   var pointList = new Array();
+  var point = new L.LatLng(0,0);
+  var followISS=document.getElementById("checkboxFollow");
+  var zoom = document.getElementById("zoom");
+  var validation = zoom[2];
+	
 
-  var followISS=document.getElementById("test1");
 
   var marqueurs=L.layerGroup()
 		.addTo(map);
@@ -42,30 +46,55 @@ window.onload=function(){
 
   function poly(long,point,pointlist){
     if(long<=170){
-          pointlist.push(point)
+          pointlist.push(point);
     }
     else{
-          polyline.clearLayers();
+          pointList.clearLayers();
         }
     var polyline = new L.polyline(pointList, {color: 'red',weight: '3'});
     map.addLayer(polyline);
   };
 
-function buttonFollow(button,map,point){
-  button.addEventListener('change',function(event){
-    event.preventDefault();
-    if (followISS.checked){
-        map.setZoom(7);
-        map.panTo(point);
-        console.log(point);
-        console.log(map.getCenter());
-    }else{
-        map.setView([0, 0], 2)
+	followISS.addEventListener('change',function(event){
+		event.preventDefault();
+		if (followISS.checked){
+			center(map,point,zoom);
+		}else{
+			map.setView([0, 0], 2);
+			zoom[0].disabled=true;
+			zoom[1].disabled=true;
+			zoom[2].disabled=true;
+			
+		}
+	});
+	
+	followISS.addEventListener('change',function(event){
+		event.preventDefault();
+		if (followISS.checked){
+			center(map,point,zoom);
+		}else{
+			map.setView([0, 0], 2);
+			zoom[0].disabled=true;
+			zoom[1].disabled=true;
+			zoom[2].disabled=true;
+			
+		}
+	});
+	
+	function center (map,point,radio) {
+		for (i=0;i<radio.length;i++){
+			if (radio[i].checked){
+					map.flyTo(point,radio[i].value);
+				}
+		console.log(point);
+		console.log(map.getCenter());
+		}
+	};
+		
+		
+	
 
-    }
-  });
-};
-
+	
 	ajaxIss();
 
 
@@ -79,13 +108,20 @@ function buttonFollow(button,map,point){
         // si l'état est le numéro 4 et que la ressource est trouvée
           if(ajax.readyState == 4 && ajax.status == 200) {
               // le texte de la réponse
-              var str=ajax.responseText;
-              var jsonObj = JSON.parse(str);
-              var result = iss.getInfos(jsonObj);
-              //Création d'un objet LatLng
-              var point = new L.LatLng(result.lat,result.long)
-              //Bouton suivre
-              buttonFollow(followISS,map,point);
+            var str=ajax.responseText;
+            var jsonObj = JSON.parse(str);
+            var result = iss.getInfos(jsonObj);
+            //Création d'un objet LatLng
+            point = new L.LatLng(result.lat,result.long);
+            //Bouton suivre
+			if (followISS.checked){
+				zoom[0].disabled=false;
+				zoom[1].disabled=false;
+				zoom[2].disabled=false;
+				console.log(zoom[0].value);
+				center(map,point,zoom);
+			}
+			
               //création de la ligne de déplacement de l'iss
               poly(result.long,point,pointList);
               //gestion des marqueurs
@@ -96,7 +132,9 @@ function buttonFollow(button,map,point){
               //affichage de la latitude et longitude
               document.getElementById("lat").innerHTML = "Latitude : "+result.lat;
               document.getElementById("long").innerHTML = "Longitude : "+result.long;
-			  //Ceckbox
+
+			  
+			  
 
               //répétition de la fonction toutes les 5 secondes
               setTimeout(function() {ajaxIss ()},5000);
