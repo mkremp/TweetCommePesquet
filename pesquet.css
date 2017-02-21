@@ -1,0 +1,87 @@
+body{
+	background-image:url(ciel.jpg);
+	margin:0%;
+	padding:0%;
+}
+
+header h1{
+	text-align:center;
+	font-family:'trebuchet MS', sans-serif;
+	font-size:150%;
+	color:white;
+	margin-top:0px;
+}
+
+header p{
+	text-align:center;
+	font-family:'trebuchet MS', sans-serif;
+	font-size:70%;
+	color:white;
+	background-color: rgba(97, 107, 102, 0.5);
+	padding:10px 40px 10px 40px;
+}
+#coord{
+	font-size:80%;
+	display: flex;
+	flex-direction:column;
+	text-align:center;
+	color:white;
+	background-color: rgba(97, 107, 102, 0.5);
+	width: 25%;
+	margin:auto;
+	padding:0%;
+}
+
+#map{
+	height: 500px;
+	width: 50%;
+	display: flex;
+	margin: auto;
+	border: 4px solid black;
+}
+
+#boutons{
+	font-size:100%;
+	display: flex;
+	flex-direction:column;
+	text-align:center;
+	color:white;
+	background-color: rgba(97, 107, 102, 0.5);
+	width: 25%;
+	margin:auto;
+	padding:0%;
+}
+
+#tcp {
+    padding: 5px 10px;
+	font-family:'trebuchet MS', sans-serif;
+    color: #eee;
+    border-radius: 4px;
+    background-color: #4169E1;
+    background-image: linear-gradient(#4169E1,#6495ED 50%, transparent 50%);
+    box-shadow: 0 1px 0 rgba(255,255,255,.1), 
+                0 0 1px 1px rgba(255,255,255,.3) inset,
+                0 1px rgba(255,255,255,.4) inset;
+    border: 1px solid black;
+    text-shadow: 0 1px 1px rgba(0,0,0,.8);
+    outline:none;
+}
+
+#tcp:hover,
+#tcp:focus {
+    color: white;
+    background-color: #1E90FF;
+    box-shadow: 0 1px 0 rgba(255,255,255,.1), 
+                0 0 1px 1px rgba(255,255,255,.3) inset,
+                0 1px rgba(255,255,255,.4) inset, 
+                0 0 5px rgba(174,58,235,1);
+    border-color: rgba(255, 255, 255, .2);
+}
+
+#picture{
+	display: flex;
+	margin: auto;
+}
+
+
+

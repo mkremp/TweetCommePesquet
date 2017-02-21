@@ -3,24 +3,31 @@
   <head>
     <meta charset="utf-8">
      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
+	 <link rel="stylesheet" type="text/css" href="pesquet.css">
      <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
      <script src="leaflet.js"></script>
      <title>TweetCommePesquet</title>
-     <style> #map{height: 700px;
-                  width: 1050px;} </style>
-     <style> #coord{float: right;} </style>
   </head>
   <body>
-    <div id='lat'>
-      <p>Latitude : </p>
-    </div>
-    <div id='long'>
-      <p>Longitude : </p>
-    </div>
+  <header>
+	<h1> Tweet comme Pesquet</h1>
+	<p>Bienvenue sur le site Web qui vous permettra, vous aussi, de poster en ligne des photos prises par satellite depuis la position 
+		en temps réel de la Station Spatiale Internationale (ISS)</p>
+   </header>
+	
+	<div id='coord'>
+		<h2> Position actuelle de l'ISS </h2>
+		<div id='lat'>
+		  <p>Latitude : </p>
+		</div>
+		<div id='long'>
+		  <p>Longitude : </p>
+		</div>
+	</div>
 
       <!-- Un élément HTML pour recueillir l’affichage -->
     <div id='map'></div>
-
+	<div id='boutons'>
     <div id='case_suivi'>
 			<label>Suivre l'ISS<input type="checkbox" name="myCheckbox" id="checkboxFollow" /></label>
     </div>
@@ -32,10 +39,9 @@
 			<input type="submit" name="envoi" value="Tweet comme Pesquet" id='tcp'/>
 		</form>
     </div>
-
-    <div id='picture'>
-      
-    </div>
+	</div>
+	<!-- Un élément HTML pour recueillir la photo -->
+    <div id='picture'></div>
 
 
 
