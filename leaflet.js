@@ -29,7 +29,8 @@ window.onload=function(){
   var followISS=document.getElementById("checkboxFollow");
   var zoom = document.getElementById("zoom");
   var validation = document.getElementById("tcp");
-  var url;
+  var url ;
+  var picture=document.getElementById("picture");
 
 
   var marqueurs=L.layerGroup()
@@ -81,7 +82,7 @@ window.onload=function(){
 
   validation.addEventListener('click', function(event) {
       event.preventDefault();
-      document.picture.innerHTML = " <img src=url />";
+      picture.innerHTML = '<img src='+url+' />';
 
   });
 
@@ -140,14 +141,16 @@ window.onload=function(){
               document.getElementById("long").innerHTML = "Longitude : "+result.long;
               
               url = "https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/"+result.long+","+result.lat+"," ;
-              /*for (i=0;i<radio.length;i++){
-                console.log(radio[i].value);
-          			if (radio[i].checked){
-                  console.log(radio[i].value);
-          					url+='radio[i].value';
-                  };
-               };*/
-              url+='2/700x250?access_token=pk.eyJ1IjoiY29oYWxsaWVyIiwiYSI6ImNpemVmODgxZTAwNzgzMnBlZzRkMXh1MjcifQ.0EiwSBDZMzgfEcam2M6nUA';
+              for (i=0;i<zoom.length;i++){
+          			if (zoom[i].checked){
+						console.log(zoom[i].value);
+          				url+=zoom[i].value+'/700x250?access_token=pk.eyJ1IjoiY29oYWxsaWVyIiwiYSI6ImNpemVmODgxZTAwNzgzMnBlZzRkMXh1MjcifQ.0EiwSBDZMzgfEcam2M6nUA';
+						if (validation.onclick){ 
+							picture.innerHTML = '<img src='+url+' />';
+						}
+					  
+				    }
+               };
               console.log(url);
 
               //répétition de la fonction toutes les 5 secondes
