@@ -17,6 +17,18 @@ window.onload=function(){
 		}
 	};
 
+  var loc = {
+    url: urlLoc,
+    methode: "POST",
+    getInfos: function(jsonObj){
+      //console.log(jsonObj.geonames)
+      toponymName=jsonObj.geonames.toponymName;
+      country=jsonObj.geonames.countryName;
+      return{toponymName:toponymName , countryName:countryName}
+
+      }
+    };
+
 	var myIcon = L.icon({
 	  iconUrl: 'navette.png',
 	  iconSize: [29, 24],
@@ -29,7 +41,8 @@ window.onload=function(){
   var followISS=document.getElementById("checkboxFollow");
   var zoom = document.getElementById("zoom");
   var validation = document.getElementById("tcp");
-  var url ;
+  var urlpicture ;
+  var urlLoc ;
   var picture=document.getElementById("picture");
 
 
@@ -46,7 +59,7 @@ window.onload=function(){
   };
 
   function poly(long,point,pointlist){
-    if(long<=170){
+    if(long<=178){
           pointlist.push(point);
     }
     else{
@@ -64,25 +77,17 @@ window.onload=function(){
 			center(map,point,zoom);
 		}else{
 			map.setView([0, 0], 2);
-			zoom[0].disabled=true;
-			zoom[1].disabled=true;
-			zoom[2].disabled=true;
 
 		}
 	});
 
-
-	//validation.addEventListener('submit',function(event){
-    //event.preventDefault();
-
-//  };
 
 
 
 
   validation.addEventListener('click', function(event) {
       event.preventDefault();
-      picture.innerHTML = '<img src='+url+' />';
+      picture.innerHTML = '<img src='+urlpicture+' />';
 
   });
 
@@ -93,8 +98,8 @@ window.onload=function(){
 			if (radio[i].checked){
 					map.flyTo(point,radio[i].value);
 				}
-		console.log(point);
-		console.log(map.getCenter());
+		//console.log(point);
+		//console.log(map.getCenter());
 		}
 	};
 
@@ -122,9 +127,6 @@ window.onload=function(){
             point = new L.LatLng(result.lat,result.long);
             //Bouton suivre
 			if (followISS.checked){
-				zoom[0].disabled=false;
-				zoom[1].disabled=false;
-				zoom[2].disabled=false;
 				console.log(zoom[0].value);
 				center(map,point,zoom);
 			}
@@ -139,31 +141,48 @@ window.onload=function(){
               //affichage de la latitude et longitude
               document.getElementById("lat").innerHTML = "Latitude : "+result.lat;
               document.getElementById("long").innerHTML = "Longitude : "+result.long;
-              
-              url = "https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/"+result.long+","+result.lat+"," ;
+
+              //generation de l'url de la photo au cas où un user souhaite tweeter
+              urlpicture = "https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/"+result.long+","+result.lat+"," ;
+              var urlpicture1;  //deux url intermediaires pour ajouter le bon zoom selon followISS.checked ou pas
+              var urlpicture2;
+
               for (i=0;i<zoom.length;i++){
           			if (zoom[i].checked){
-						console.log(zoom[i].value);
-          				url+=zoom[i].value+'/700x250?access_token=pk.eyJ1IjoiY29oYWxsaWVyIiwiYSI6ImNpemVmODgxZTAwNzgzMnBlZzRkMXh1MjcifQ.0EiwSBDZMzgfEcam2M6nUA';
-						if (validation.onclick){ 
-							picture.innerHTML = '<img src='+url+' />';
-						}
-					  
-				    }
+						      //console.log(zoom[i].value);
+          				urlpicture1=zoom[i].value+'/700x250?access_token=pk.eyJ1IjoiY29oYWxsaWVyIiwiYSI6ImNpemVmODgxZTAwNzgzMnBlZzRkMXh1MjcifQ.0EiwSBDZMzgfEcam2M6nUA';
+                }
+                else{  //zoom par défaut si aucun bouton de zoom coché -> suivre iss non coché
+                  urlpicture2='2/700x250?access_token=pk.eyJ1IjoiY29oYWxsaWVyIiwiYSI6ImNpemVmODgxZTAwNzgzMnBlZzRkMXh1MjcifQ.0EiwSBDZMzgfEcam2M6nUA';
+                }
+
                };
-              console.log(url);
+               //ajout de la bonne partie de l'url selon si on est par défaut ou avec un bouton de zoom
+               if(!followISS.checked){
+                 urlpicture+=urlpicture2;
+               }else{
+                 urlpicture+=urlpicture1;
+               }
+
+
+              //generation de l'url de recherche du lieu de la photo
+              urlLoc =' http://api.geonames.org/findNearbyPlaceNameJSON?'+'lat='+result.lat+'&lng='+result.long+'&username=mkremp' ;
+              console.log(urlLoc);
+
+
+
+
 
               //répétition de la fonction toutes les 5 secondes
               setTimeout(function() {ajaxIss ()},5000);
 
+            }
+			    });
+          ajax.send("");
+		  };
 
-			    }
-		  });
-      ajax.send("");
 
 
 
 
     };
-
-}
