@@ -87,6 +87,7 @@ window.onload=function(){
 
   validation.addEventListener('click', function(event) {
       event.preventDefault();
+	  photo(long,lat,zoom);
       picture.innerHTML = '<img src='+urlpicture+' />';
 
   });
@@ -103,6 +104,18 @@ window.onload=function(){
 		}
 	};
 
+	function photo(long,lat,zoom){
+        for (i=0;i<zoom.length;i++){
+          	if (zoom[i].checked){
+				console.log(zoom[i].value);
+				urlpicture="https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/"+long+","+lat+","+zoom[i].value+'/700x250?access_token=pk.eyJ1IjoiY29oYWxsaWVyIiwiYSI6ImNpemVmODgxZTAwNzgzMnBlZzRkMXh1MjcifQ.0EiwSBDZMzgfEcam2M6nUA';
+			}else{  //zoom par défaut si aucun bouton de zoom coché -> suivre iss non coché
+                urlpicture="https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/"+long+","+lat+",2/700x250?access_token=pk.eyJ1IjoiY29oYWxsaWVyIiwiYSI6ImNpemVmODgxZTAwNzgzMnBlZzRkMXh1MjcifQ.0EiwSBDZMzgfEcam2M6nUA";
+			}
+
+        };
+		return (urlpicture)
+	}
 
 
 
@@ -142,27 +155,13 @@ window.onload=function(){
               document.getElementById("lat").innerHTML = "Latitude : "+result.lat;
               document.getElementById("long").innerHTML = "Longitude : "+result.long;
 
-              //generation de l'url de la photo au cas où un user souhaite tweeter
-              urlpicture = "https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/"+result.long+","+result.lat+"," ;
-              var urlpicture1;  //deux url intermediaires pour ajouter le bon zoom selon followISS.checked ou pas
-              var urlpicture2;
+              //generation de l'url de la photo au cas où un user souhaite tweeter 
+                urlpicture=photo(result.long,result.lat,radio);
+			
 
-              for (i=0;i<zoom.length;i++){
-          			if (zoom[i].checked){
-						      //console.log(zoom[i].value);
-          				urlpicture1=zoom[i].value+'/700x250?access_token=pk.eyJ1IjoiY29oYWxsaWVyIiwiYSI6ImNpemVmODgxZTAwNzgzMnBlZzRkMXh1MjcifQ.0EiwSBDZMzgfEcam2M6nUA';
-                }
-                else{  //zoom par défaut si aucun bouton de zoom coché -> suivre iss non coché
-                  urlpicture2='2/700x250?access_token=pk.eyJ1IjoiY29oYWxsaWVyIiwiYSI6ImNpemVmODgxZTAwNzgzMnBlZzRkMXh1MjcifQ.0EiwSBDZMzgfEcam2M6nUA';
-                }
-
-               };
-               //ajout de la bonne partie de l'url selon si on est par défaut ou avec un bouton de zoom
-               if(!followISS.checked){
-                 urlpicture+=urlpicture2;
-               }else{
-                 urlpicture+=urlpicture1;
-               }
+               
+			
+               
 
 
               //generation de l'url de recherche du lieu de la photo
