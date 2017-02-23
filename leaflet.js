@@ -18,13 +18,13 @@ window.onload=function(){
 	};
 
   var loc = {
-    url: urlLoc,
+    url: ' http://api.geonames.org/findNearbyPlaceNameJSON?',
     methode: "POST",
     getInfos: function(jsonObj){
       //console.log(jsonObj.geonames)
-      toponymName=jsonObj.geonames.toponymName;
+      cityName=jsonObj.geonames.toponymName;
       country=jsonObj.geonames.countryName;
-      return{toponymName:toponymName , countryName:countryName}
+      return{cityName:cityName , country:country}
 
       }
     };
@@ -43,7 +43,10 @@ window.onload=function(){
   var validation = document.getElementById("tcp");
   var urlpicture ;
   var urlLoc ;
+  var recherche = "" ;
   var picture=document.getElementById("picture");
+  var caseTweet=document.getElementById("caseTweet");
+  var resultTxt="";
 
 
   var marqueurs=L.layerGroup()
@@ -89,6 +92,8 @@ window.onload=function(){
       event.preventDefault();
 	  photo(long,lat,zoom);
       picture.innerHTML = '<img src='+urlpicture+' />';
+	  resultTxt=ajaxTxt(recherche);
+	  
 
   });
 
@@ -111,12 +116,31 @@ window.onload=function(){
 
 				//console.log(zoom[i].value);
 				urlpicture="https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/"+long+","+lat+","+zoom[i].value+'/700x250?access_token=pk.eyJ1IjoiY29oYWxsaWVyIiwiYSI6ImNpemVmODgxZTAwNzgzMnBlZzRkMXh1MjcifQ.0EiwSBDZMzgfEcam2M6nUA';
-
 			}
 
         };
 		return (urlpicture)
 	}
+	
+	function ajaxTxt(recherche){
+      var ajax = new XMLHttpRequest();
+      ajax.open(loc.methode, loc.url+recherche, true);
+      // métadonnées de la requête AJAX
+      ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      ajax.addEventListener('readystatechange',function(){
+		  if(ajax.readyState == 4 && ajax.status == 200) {
+              // le texte de la réponse
+            var str=ajax.responseText;
+            var jsonObj = JSON.parse(str);
+            var result = loc.getInfos(jsonObj);
+			var cityName= result.cityName;
+			var countryName=result.countryName;
+			console.log(cityName);
+			return{cityName:cityName , countryName:countryName};
+		  }
+	  });
+		ajax.send("");
+	};
 
 
 
@@ -153,8 +177,8 @@ window.onload=function(){
 
 
               //affichage de la latitude et longitude
-              document.getElementById("lat").innerHTML = "Latitude : "+result.lat;
-              document.getElementById("long").innerHTML = "Longitude : "+result.long;
+              document.getElementById("lat").innerHTML = 'Latitude : ' +result.lat;
+              document.getElementById("long").innerHTML ='Longitude : '+result.long;
 
               //generation de l'url de la photo au cas où un user souhaite tweeter
               urlpicture=photo(result.long,result.lat,radio);
@@ -166,8 +190,10 @@ window.onload=function(){
 
 
               //generation de l'url de recherche du lieu de la photo
-              urlLoc =' http://api.geonames.org/findNearbyPlaceNameJSON?'+'lat='+result.lat+'&lng='+result.long+'&username=mkremp' ;
-              console.log(urlLoc);
+              recherche ='lat='+result.lat+'&lng='+result.long+'&username=mkremp' ;
+              var resultTxt=ajaxTxt(recherche);
+			  caseTweet.innerHTML = resultTxt.cityName;
+			  
 
 
 
