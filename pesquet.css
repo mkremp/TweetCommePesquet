@@ -83,5 +83,16 @@ header p{
 	justify-content:center;
 }
 
+#caseTweet{ 
+	font-size:80%;
+	display: flex;
+	text-align:center;
+	color:white;
+	background-color: rgba(97, 107, 102, 0.5);
+	width: 25%;
+	margin:auto;
+	padding:0%;
+}
+
 
 
