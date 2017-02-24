@@ -19,12 +19,13 @@ window.onload=function(){
 
   var loc = {
     url: ' http://api.geonames.org/findNearbyPlaceNameJSON?',
-    methode: "POST",
+    methode: "GET",
     getInfos: function(jsonObj){
       //console.log(jsonObj.geonames)
-      cityName=jsonObj.geonames.toponymName;
-      country=jsonObj.geonames.countryName;
-      return{cityName:cityName , country:country}
+      cityName=jsonObj.geonames[0].toponymName;
+      country=jsonObj.geonames[0].countryName;
+      console.log(cityName);
+      return{cityName:cityName , country:country};
 
       }
     };
@@ -43,14 +44,17 @@ window.onload=function(){
   var validation = document.getElementById("tcp");
   var urlpicture ;
   var urlLoc ;
-  var recherche = "" ;
   var picture=document.getElementById("picture");
-  var caseTweet=document.getElementById("caseTweet");
+  var caseTweet=document.getElementById("txt");
   var resultTxt="";
 
 
   var marqueurs=L.layerGroup()
 		.addTo(map);
+
+var correct = function(a){
+    return a;
+  };
 
   function mark(point){
     //gestion des marqueurs
@@ -89,13 +93,33 @@ window.onload=function(){
 
 
   validation.addEventListener('click', function(event) {
-      event.preventDefault();
+    event.preventDefault();
 	  photo(long,lat,zoom);
-      picture.innerHTML = '<img src='+urlpicture+' />';
-	  resultTxt=ajaxTxt(recherche);
-	  
+    picture.innerHTML = '<img src='+urlpicture+' />';
+    //console.log(resultTxt.cityName);
+    var ajax1 = new XMLHttpRequest();
+    ajax1.open(loc.methode, loc.url+'&lat='+lat+'&lng='+long+'&username=mkremp', true);
+    // métadonnées de la requête AJAX
+    ajax1.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    ajax1.addEventListener('readystatechange',function(){
+    if(ajax1.readyState == 4 && ajax1.status == 200) {
+          caseTweet.innerHTML="";
+            // le texte de la réponse
+          var str1=ajax1.responseText;
+          var jsonObj1 = JSON.parse(str1);
+          var result1 = loc.getInfos(jsonObj1);
+          console.log(result1);
+          caseTweet.innerHTML+="Hello " + result1.cityName + " - " + result1.country ;
+        }
 
-  });
+      });
+      ajax1.send("");
+
+
+    });
+
+
+
 
 
 
@@ -121,26 +145,28 @@ window.onload=function(){
         };
 		return (urlpicture)
 	}
-	
-	function ajaxTxt(recherche){
-      var ajax = new XMLHttpRequest();
-      ajax.open(loc.methode, loc.url+recherche, true);
+
+	/*function ajaxTxt(long,lat){
+      var ajax1 = new XMLHttpRequest();
+      ajax1.open(loc.methode, loc.url+'&lat='+42+'&lng='+1+'&username=mkremp', true);
       // métadonnées de la requête AJAX
-      ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-      ajax.addEventListener('readystatechange',function(){
-		  if(ajax.readyState == 4 && ajax.status == 200) {
+      ajax1.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      ajax1.addEventListener('readystatechange',function(){
+		  if(ajax1.readyState == 4 && ajax1.status == 200) {
               // le texte de la réponse
-            var str=ajax.responseText;
-            var jsonObj = JSON.parse(str);
-            var result = loc.getInfos(jsonObj);
-			var cityName= result.cityName;
-			var countryName=result.countryName;
-			console.log(cityName);
-			return{cityName:cityName , countryName:countryName};
-		  }
-	  });
-		ajax.send("");
-	};
+            var str1=ajax1.responseText;
+            var jsonObj1 = JSON.parse(str1);
+            var result1 = loc.getInfos(jsonObj1);
+            console.log(result1);
+            return{result1:result1};
+
+      }
+
+    });
+    ajax1.send("");
+
+
+	};*/
 
 
 
@@ -165,7 +191,7 @@ window.onload=function(){
             point = new L.LatLng(result.lat,result.long);
             //Bouton suivre
 			if (followISS.checked){
-				console.log(zoom[0].value);
+				//console.log(zoom[0].value);
 				center(map,point,zoom);
 			}
 
@@ -190,10 +216,8 @@ window.onload=function(){
 
 
               //generation de l'url de recherche du lieu de la photo
-              recherche ='lat='+result.lat+'&lng='+result.long+'&username=mkremp' ;
-              var resultTxt=ajaxTxt(recherche);
-			  caseTweet.innerHTML = resultTxt.cityName;
-			  
+              //recherche ='&lat='+result.lat+'&lng='+result.long+'&username=mkremp' ;
+
 
 
 
