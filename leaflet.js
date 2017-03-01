@@ -18,17 +18,33 @@ window.onload=function(){
 	};
 
   var loc = {
-    url: ' http://api.geonames.org/findNearbyPlaceNameJSON?',
+    url1:'http://api.geonames.org/findNearbyPlaceNameJSON?', //utilisée pour la premiere api
+    url2:'http://api.geonames.org/extendedFindNearby?', // idem
+    url3:'http://127.0.0.1/tcp/main.php?', // utilisée pour notre propre api
     methode: "GET",
     getInfos: function(jsonObj){
-      //console.log(jsonObj.geonames)
-      cityName=jsonObj.geonames[0].toponymName;
-      country=jsonObj.geonames[0].countryName;
-      console.log(cityName);
+		if (jsonObj.geoname==null){
+		  cityName=jsonObj.ocean.name;
+		  country="";
+
+
+	  }else{
+      cityName=jsonObj.geoname[4].toponymName;
+      country=jsonObj.geoname[4].countryName;
+      //console.log(cityName);
+
+	  }
+
+      //console.log(cityName);
       return{cityName:cityName , country:country};
 
       }
     };
+
+  var locIss = {
+    url4 : 'http://127.0.0.1/tcp/apiIss.php',
+    methode: "GET"
+  }
 
 	var myIcon = L.icon({
 	  iconUrl: 'navette.png',
@@ -47,14 +63,17 @@ window.onload=function(){
   var picture=document.getElementById("picture");
   var caseTweet=document.getElementById("txt");
   var resultTxt="";
-
+  var debug = document.getElementById("checkBoxDebug");
 
   var marqueurs=L.layerGroup()
 		.addTo(map);
-
+/*
 var correct = function(a){
     return a;
   };
+*/
+
+
 
   function mark(point){
     //gestion des marqueurs
@@ -66,15 +85,19 @@ var correct = function(a){
   };
 
   function poly(long,point,pointlist){
+	var polyline = new L.polyline(pointList, {color: 'red',weight: '3'});
     if(long<=178){
           pointlist.push(point);
     }
     else{
           pointlist.length = 0;
-          polyline.clearLayers();
+          for(i in map._layers){
+            if(map._layers[i].options.format == undefined){
+              map.removeLayer(map.layers[i]);
+            }
+          }
 
         }
-    var polyline = new L.polyline(pointList, {color: 'red',weight: '3'});
     map.addLayer(polyline);
   };
 
@@ -88,17 +111,56 @@ var correct = function(a){
 		}
 	});
 
+  debug.addEventListener('change',function(event){
+    event.preventDefault();
+    if(debug.checked){
+      //lat et long iss = ce que l'on calcule dans le apiIss.php
+    }
+  })
+
+
+    validation.addEventListener('click', function(event) {
+      event.preventDefault();
+        photo(long,lat,zoom);
+      picture.innerHTML = '<img src='+urlpicture+' />';
+      //console.log(resultTxt.cityName);
+      var ajax1 = new XMLHttpRequest();
+      ajax1.open(loc.methode, loc.url3+'&lat='+lat+'&lng='+long+'&username=mkremp', true);
+      //console.log("lapin");
+      // métadonnées de la requête AJAX
+      ajax1.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      ajax1.addEventListener('readystatechange',function(){
+      if(ajax1.readyState == 4 && ajax1.status == 200) {
+            caseTweet.innerHTML="";
+              // le texte de la réponse
+            var str1=ajax1.responseText;
+            console.log(str1);
+            console.log("lapin");
+
+            var jsonObj1 = JSON.parse(str1);
+            console.log(jsonObj1);
+            var result1 = loc.getInfos(jsonObj1);
+            //console.log(result1);
+
+            caseTweet.innerHTML+="Hello " + result1.cityName + " - " + result1.country+" !" ;
+          }
+
+        });
+        ajax1.send("");
+
+
+      });
 
 
 
-
-  validation.addEventListener('click', function(event) {
+//premier cas : première api qui ne donne pas le nom de l'océan..
+  /*validation.addEventListener('click', function(event) {
     event.preventDefault();
 	  photo(long,lat,zoom);
     picture.innerHTML = '<img src='+urlpicture+' />';
     //console.log(resultTxt.cityName);
     var ajax1 = new XMLHttpRequest();
-    ajax1.open(loc.methode, loc.url+'&lat='+lat+'&lng='+long+'&username=mkremp', true);
+    ajax1.open(loc.methode, loc.url1+'&lat='+lat+'&lng='+long+'&username=mkremp', true);
     // métadonnées de la requête AJAX
     ajax1.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     ajax1.addEventListener('readystatechange',function(){
@@ -109,14 +171,14 @@ var correct = function(a){
           var jsonObj1 = JSON.parse(str1);
           var result1 = loc.getInfos(jsonObj1);
           console.log(result1);
-          caseTweet.innerHTML+="Hello " + result1.cityName + " - " + result1.country ;
+          caseTweet.innerHTML+="Hello " + result1.cityName + " - " + result1.country+" !" ;
         }
 
       });
       ajax1.send("");
 
 
-    });
+  });*/
 
 
 
@@ -146,6 +208,8 @@ var correct = function(a){
 		return (urlpicture)
 	}
 
+
+  // problème de la fonction asynchrone avec l'api geoloc avec océan
 	/*function ajaxTxt(long,lat){
       var ajax1 = new XMLHttpRequest();
       ajax1.open(loc.methode, loc.url+'&lat='+42+'&lng='+1+'&username=mkremp', true);
